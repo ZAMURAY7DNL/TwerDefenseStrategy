@@ -283,7 +283,7 @@ def start_music(volume=0.5):
         pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=2048)
     
     print("[MUSIC] Generando canción dopaminérgica...")
-    print("[MUSIC] BPM: 128 | Tonalidad: Em | Estructura: Intro→Build→Drop")
+    print("[MUSIC] BPM: 128 | Tonalidad: Em | Estructura: Intro->Build->Drop")
     
     wave_data = generate_dopamine_loop()
     
@@ -304,7 +304,7 @@ def start_music(volume=0.5):
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)
     
-    print(f"[MUSIC] ¡DISFRUTA! (vol: {volume})")
+    print(f"[MUSIC] DISFRUTA! (vol: {volume})")
 
 
 def stop_music():
