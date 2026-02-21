@@ -18,13 +18,15 @@ class SoundGenerator:
     CHANNELS = 2
     
     def __init__(self):
-        pygame.mixer.init(
-            frequency=self.SAMPLE_RATE,
-            size=-16,
-            channels=2,
-            buffer=512
-        )
-        # Reservar canal 0 exclusivamente para música
+        # Solo inicializar si no está listo
+        if not pygame.mixer.get_init():
+            pygame.mixer.init(
+                frequency=self.SAMPLE_RATE,
+                size=-16,
+                channels=2,
+                buffer=512
+            )
+        # Reservar canal 0 para música del SoundGenerator
         pygame.mixer.set_reserved(1)
         
         self._cache = {}

@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tower Defense: Investigación Profunda</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --accent1: #ff4d4d;
+    --accent2: #ffcc00;
+    --accent3: #00e5ff;
+    --accent4: #a259ff;
+    --accent5: #00ff88;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 20px;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 0%, rgba(162,89,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(0,229,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 90%, rgba(255,77,77,0.08) 0%, transparent 50%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 24px;
+    padding: 6px 16px;
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 12vw, 160px);
+    letter-spacing: 4px;
+    line-height: 0.9;
+    background: linear-gradient(135deg, #fff 0%, rgba(162,89,255,0.8) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .hero-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 4vw, 48px);
+    color: var(--accent2);
+    letter-spacing: 6px;
+    margin-bottom: 32px;
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 48px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* NAV */
+  .toc {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+  }
+
+  .toc a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .toc a:hover {
+    color: var(--accent2);
+    border-color: var(--accent2);
+  }
+
+  /* SECTIONS */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1;
+    margin-bottom: 40px;
+  }
+
+  .section-intro {
+    font-size: 18px;
+    color: #bbbbd0;
+    max-width: 720px;
+    margin-bottom: 48px;
+    line-height: 1.8;
+  }
+
+  /* CARDS GRID */
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .card:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .card p {
+    color: #9999aa;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .card ul {
+    list-style: none;
+    margin-top: 12px;
+  }
+
+  .card ul li {
+    color: #9999aa;
+    font-size: 14px;
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent2);
+  }
+
+  /* RANKING TABLE */
+  .rank-table { width: 100%; border-collapse: collapse; }
+
+  .rank-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rank-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .rank-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .badge-fire { background: rgba(255,77,77,0.2); color: var(--accent1); border: 1px solid rgba(255,77,77,0.3); }
+  .badge-gold { background: rgba(255,204,0,0.15); color: var(--accent2); border: 1px solid rgba(255,204,0,0.3); }
+  .badge-cyan { background: rgba(0,229,255,0.1); color: var(--accent3); border: 1px solid rgba(0,229,255,0.2); }
+  .badge-purple { background: rgba(162,89,255,0.15); color: var(--accent4); border: 1px solid rgba(162,89,255,0.3); }
+  .badge-green { background: rgba(0,255,136,0.1); color: var(--accent5); border: 1px solid rgba(0,255,136,0.2); }
+
+  /* FORMULA BLOCK */
+  .formula {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent4);
+  }
+
+  .formula strong { color: var(--accent2); font-family: 'Space Grotesk', sans-serif; }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+
+  .highlight h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  /* COMBO GRID */
+  .combo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .combo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+
+  .combo-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .combo-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .viral-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent5);
+  }
+
+  /* DO / DONT */
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  .do-box {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .dont-box {
+    background: rgba(255,77,77,0.05);
+    border: 1px solid rgba(255,77,77,0.2);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .do-box h4 { color: var(--accent5); font-family: 'Bebas Neue', sans-serif; font-size: 26px; margin-bottom: 16px; }
+  .dont-box h4 { color: var(--accent1); font-family: 'Bebas Neue', sans-serif; font-size: 26px; margin-bottom: 16px; }
+
+  .do-box li, .dont-box li {
+    list-style: none;
+    font-size: 14px;
+    padding: 6px 0;
+    color: #9999aa;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .do-box li::before { content: '✓'; position: absolute; left: 0; color: var(--accent5); }
+  .dont-box li::before { content: '✗'; position: absolute; left: 0; color: var(--accent1); }
+
+  /* COLOR PALETTE */
+  .palette {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+
+  .swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    padding: 4px;
+    font-size: 9px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255,255,255,0.7);
+    cursor: default;
+  }
+
+  /* ROADMAP */
+  .timeline { position: relative; padding-left: 32px; }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent4), var(--accent3), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent4);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px var(--accent4);
+  }
+
+  .timeline-item h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+
+  .timeline-item p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* BALATRO SECTION */
+  .balatro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .balatro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .balatro-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+  }
+
+  .balatro-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    .do-dont { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; }
+    .toc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">🔍 Investigación de Mercado · Febrero 2026</div>
+  <h1>TOWER<br>DEFENSE</h1>
+  <div class="hero-sub">La Guía Definitiva</div>
+  <p class="hero-desc">Todo lo que necesitas saber sobre el género para crear algo viral, adictivo y difícil de soltar — como Balatro, pero con torres.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">$2.1B</div>
+      <div class="stat-label">Mercado mobile TD</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">37K+</div>
+      <div class="stat-label">Descargas/semana Bloons</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">132K</div>
+      <div class="stat-label">Usuarios activos PvZ pico</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">70+</div>
+      <div class="stat-label">Mapas Bloons TD 6</div>
+    </div>
+  </div>
+</section>
+
+<!-- NAV -->
+<nav class="toc">
+  <a href="#mecanicas">⚙️ Mecánicas</a>
+  <a href="#arte">🎨 Arte & Color</a>
+  <a href="#musica">🎵 Música</a>
+  <a href="#enemigos">👾 Enemigos</a>
+  <a href="#combos">🧬 Combos Género</a>
+  <a href="#balatro">🃏 Lección Balatro</a>
+  <a href="#errores">⚠️ Errores</a>
+  <a href="#sesgo">🧠 Psicología</a>
+  <a href="#hoja">🗺️ Hoja de Ruta</a>
+</nav>
+
+<!-- 1. MECÁNICAS -->
+<section class="section" id="mecanicas">
+  <div class="section-label" style="color: var(--accent1)">01 / MECÁNICAS</div>
+  <div class="section-title">Lo que <span style="color: var(--accent1)">engancha</span> a los jugadores</div>
+  <p class="section-intro">Después de analizar miles de reviews en Steam, Reddit, Google Play y App Store, estas son las mecánicas que generan más entusiasmo, retención y boca a boca.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent4), var(--accent3))"></div>
+      <span class="card-icon">🧬</span>
+      <h3>Sinergias entre Torres</h3>
+      <p>La mecánica #1 más citada. Cuando dos torres se potencian mutuamente, los jugadores sienten que descubrieron algo. Es el "ajá" más poderoso del género.</p>
+      <ul>
+        <li>Torres que reducen velocidad + torres de daño alto</li>
+        <li>Torres de área + torres de veneno</li>
+        <li>Torre soporte que multiplica el daño de vecinas</li>
+        <li>Combos secretos que "rompen" el juego</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent1), var(--accent2))"></div>
+      <span class="card-icon">🦸</span>
+      <h3>Héroes Activos</h3>
+      <p>Los juegos que te hacen <em>participar</em> activamente —no solo colocar torres y ver— generan mucho más engagement. El jugador no quiere ser espectador.</p>
+      <ul>
+        <li>Kingdom Rush: héroes con habilidades únicas</li>
+        <li>Dungeon Defenders: control directo del personaje</li>
+        <li>Orcs Must Die: shooter + trampas</li>
+        <li>Sanctum: perspectiva FPS dentro del TD</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), var(--accent5))"></div>
+      <span class="card-icon">🎲</span>
+      <h3>Roguelite + Progresión</h3>
+      <p>Cada run diferente + progresión permanente entre runs = retención brutal. Bloons TD 6 lleva años con este modelo. Es el estándar de oro actual.</p>
+      <ul>
+        <li>Builds aleatorias únicas por run</li>
+        <li>Desbloqueables permanentes (meta-progresión)</li>
+        <li>"Just one more run" loop</li>
+        <li>Artefactos/reliquias que cambian el estilo de juego</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent3), var(--accent4))"></div>
+      <span class="card-icon">🛣️</span>
+      <h3>Creación de Laberintos</h3>
+      <p>Cuando el jugador puede colocar torres para <em>crear</em> el camino del enemigo, la sensación de control y creatividad se dispara. La estrategia se siente real.</p>
+      <ul>
+        <li>Mazing: construir paredes con torres</li>
+        <li>El camino óptimo como puzzle a resolver</li>
+        <li>Permite estrategias imposibles de "resolver"</li>
+        <li>Favorito de la comunidad hardcore</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent5), var(--accent1))"></div>
+      <span class="card-icon">⬆️</span>
+      <h3>Árboles de Upgrades</h3>
+      <p>Las actualizaciones con <em>elecciones</em> reales —no solo "+10% daño"— crean identidad de estilo de juego. El jugador forma un vínculo con "su build".</p>
+      <ul>
+        <li>Ramas de upgrade con trade-offs reales</li>
+        <li>Upgrades visuales (la torre cambia de aspecto)</li>
+        <li>Habilidades especiales únicas por upgrade path</li>
+        <li>Kingdom Rush: 2 caminos muy diferentes por torre</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), var(--accent4))"></div>
+      <span class="card-icon">🌊</span>
+      <h3>Dificultad Escalada Justa</h3>
+      <p>La curva de dificultad es el factor que más destruye o salva un TD. Tiene que sentirse imposible pero posible. El jugador debe saber <em>por qué</em> perdió.</p>
+      <ul>
+        <li>Boss waves con mecánicas únicas</li>
+        <li>Oleadas que fuerzan cambio de estrategia</li>
+        <li>Dificultades múltiples con modificadores</li>
+        <li>Modo endless para la comunidad hardcore</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="formula">
+    <strong>FÓRMULA DE ADICCIÓN TD (2025):</strong><br><br>
+    Sinergias Ocultas + Builds Únicas por Run + Participación Activa + Meta-Progresión + Dificultad Escalada = 🔥 Retención Alta
+  </div>
+</section>
+
+<!-- 2. ARTE & COLOR -->
+<section class="section" id="arte">
+  <div class="section-label" style="color: var(--accent2)">02 / ARTE & COLOR</div>
+  <div class="section-title"><span style="color: var(--accent2)">Estética</span> que convierte</div>
+  <p class="section-intro">Los estilos artísticos más exitosos del género tienen algo en común: son <strong>claros y legibles</strong> durante el caos de una oleada, y <strong>únicos</strong> en identidad visual.</p>
+
+  <div class="grid-3" style="margin-bottom: 40px;">
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, #ff9900, #ffcc00)"></div>
+      <span class="card-icon">🖌️</span>
+      <h3>Cartoon / Hand-Drawn</h3>
+      <div style="display: flex; gap: 6px; margin: 8px 0;"><span class="badge badge-fire">MÁS POPULAR</span><span class="badge badge-gold">MOBILE #1</span></div>
+      <p>Kingdom Rush, Bloons TD 6, Plants vs Zombies. Paletas vivas, personajes con carácter, enemigos memorables. Funciona en TODAS las plataformas y edades.</p>
+      <ul>
+        <li>Colores saturados y contrastados</li>
+        <li>Personajes con proporciones exageradas</li>
+        <li>Animaciones juguetonas</li>
+        <li>Lectura visual limpia = menos frustración</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, #6666ff, #00ccff)"></div>
+      <span class="card-icon">📦</span>
+      <h3>Pixel Art</h3>
+      <div style="display: flex; gap: 6px; margin: 8px 0;"><span class="badge badge-purple">TENDENCIA</span><span class="badge badge-cyan">INDIE FAVE</span></div>
+      <p>Nostalgia + indie credibility. Funciona con presupuestos bajos y genera comunidad fiel. Muy popular en itch.io y Steam indie.</p>
+      <ul>
+        <li>Paletas limitadas con mucho carácter</li>
+        <li>16-bit o 32-bit según la visión</li>
+        <li>Efectos de partículas sorprendentes</li>
+        <li>Atractivo para creadores de contenido</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, #ffffff, #888888)"></div>
+      <span class="card-icon">⬛</span>
+      <h3>Minimalista</h3>
+      <div style="display: flex; gap: 6px; margin: 8px 0;"><span class="badge badge-green">EMERGENTE</span><span class="badge badge-cyan">PC STEAM</span></div>
+      <p>Thronefall, Bad North, Mindustry. Cuando la jugabilidad es la estrella, el arte limpio no distrae. Muy apreciado en Steam por jugadores maduros.</p>
+      <ul>
+        <li>Formas geométricas simples</li>
+        <li>Color como lenguaje funcional</li>
+        <li>Legibilidad perfecta en caos</li>
+        <li>Elegante y atemporal</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 20px; color: var(--accent2)">PALETAS QUE FUNCIONAN</h3>
+
+  <div class="grid-2">
+    <div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">Fantasy / Medieval (Kingdom Rush style)</p>
+      <div class="palette">
+        <div class="swatch" style="background: #2d4a1e">forest</div>
+        <div class="swatch" style="background: #8b5e3c">earth</div>
+        <div class="swatch" style="background: #c9a84c">gold</div>
+        <div class="swatch" style="background: #4169a8">royal</div>
+        <div class="swatch" style="background: #cc3333">enemy</div>
+        <div class="swatch" style="background: #f0e6c8">light</div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 24px;">Sci-Fi / Futurista (Mindustry style)</p>
+      <div class="palette">
+        <div class="swatch" style="background: #0d1117">deep</div>
+        <div class="swatch" style="background: #161b22">panel</div>
+        <div class="swatch" style="background: #00ccff">energy</div>
+        <div class="swatch" style="background: #ff6600">hot</div>
+        <div class="swatch" style="background: #00ff88">safe</div>
+        <div class="swatch" style="background: #ff3333">danger</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">Cartoon Vivo (Bloons / PvZ style)</p>
+      <div class="palette">
+        <div class="swatch" style="background: #ff4444">red</div>
+        <div class="swatch" style="background: #ff8800">orange</div>
+        <div class="swatch" style="background: #ffcc00">yellow</div>
+        <div class="swatch" style="background: #44cc44">grass</div>
+        <div class="swatch" style="background: #4488ff">sky</div>
+        <div class="swatch" style="background: #cc44ff">magic</div>
+      </div>
+      <div class="highlight" style="margin-top: 24px;">
+        <h4 style="color: var(--accent2); font-size: 18px;">🔑 REGLA DE ORO DEL COLOR</h4>
+        <p style="font-size: 14px; color: var(--muted); line-height: 1.7;">Los elementos <strong style="color: white;">aliados</strong> (torres, upgrades positivos) deben ser <strong style="color: #4488ff;">azules/verdes/dorados</strong>. Los <strong style="color: white;">enemigos</strong> siempre en <strong style="color: var(--accent1);">rojo/naranja</strong>. Los <strong style="color: white;">recursos</strong> en <strong style="color: var(--accent2);">amarillo/dorado</strong>. Esta convención existe porque reduce carga cognitiva durante el caos — nunca la rompas sin razón.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top: 32px; border: 1px solid rgba(162,89,255,0.3);">
+    <h4 style="color: var(--accent4);">💡 INSIGHT CLAVE: Legibilidad en Caos</h4>
+    <p style="color: var(--muted); font-size: 15px; line-height: 1.8;">El error más común en TD es hacer el arte "bonito" a expensas de la legibilidad. Cuando hay 50 enemigos en pantalla y 20 proyectiles, el jugador debe <strong style="color: white;">leer la situación en menos de 1 segundo</strong>. La silueta de cada enemigo debe ser única. El tamaño indica peligro. El color indica tipo. Nunca sacrifiques esto por belleza.</p>
+  </div>
+</section>
+
+<!-- 3. MÚSICA -->
+<section class="section" id="musica">
+  <div class="section-label" style="color: var(--accent3)">03 / MÚSICA & AUDIO</div>
+  <div class="section-title">El sonido que <span style="color: var(--accent3)">no notás</span> pero sentís</div>
+  <p class="section-intro">La música en un TD tiene una función única: mantener la tensión sin convertirse en distracción. Los mejores soundtracks son casi invisibles hasta que los quitás y te das cuenta de cuánto hacían.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent3), var(--accent4))"></div>
+      <span class="card-icon">🎸</span>
+      <h3>Fantasy / Orquestal</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-gold">KINGDOM RUSH</span></div>
+      <p>El estándar del género. Cuerdas épicas en las boss waves, música más tranquila entre oleadas. Crea el arco emocional perfecto. Funciona en mobile y PC.</p>
+      <ul>
+        <li>Tensión que sube con cada oleada</li>
+        <li>Fanfarrias de victoria muy satisfactorias</li>
+        <li>Leitmotifs por tipo de enemigo</li>
+        <li>Layer system: más instrumentos = más peligro</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, #ff6600, var(--accent3))"></div>
+      <span class="card-icon">🤖</span>
+      <h3>Electronic / Synthwave</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-cyan">MINDUSTRY</span></div>
+      <p>Para mundos sci-fi o futuristas. Loops que no cansan, mucho headspace mental para pensar estrategia. Ambient electrónico funciona MUY bien.</p>
+      <ul>
+        <li>Loops sin puntos de atención obvia</li>
+        <li>BPM que acompaña el ritmo del juego</li>
+        <li>Sintetizadores modulares para atmósfera</li>
+        <li>Preferido por la comunidad de PC</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), #ff6600))"></div>
+      <span class="card-icon">🌈</span>
+      <h3>Cartoon / Upbeat</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-fire">PvZ / BLOONS</span></div>
+      <p>Jovial, memorable, con personalidad. Plants vs Zombies tiene uno de los soundtracks más reconocibles del gaming. La música refuerza la identidad visual.</p>
+      <ul>
+        <li>Melodías pegajosas y reconocibles</li>
+        <li>Instrumentos con carácter (ukelele, marimba)</li>
+        <li>Canciones temáticas por nivel/mundo</li>
+        <li>Efectos de sonido integrados con la música</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight" style="border: 1px solid rgba(0,229,255,0.2); margin-top: 32px;">
+    <h4 style="color: var(--accent3);">🎯 OPORTUNIDAD ÚNICA: Music + TD = Nicho Virgen</h4>
+    <p style="color: var(--muted); font-size: 15px; line-height: 1.8; margin-bottom: 16px;">En itch.io existe una etiqueta de "Music + Tower Defense" con MUY pocas entradas de calidad. Juegos como <strong style="color: white;">TowerBeats: Rhythm Defense</strong> o <strong style="color: white;">Beat TD</strong> muestran que la fusión ritmo-TD casi no ha sido explorada seriamente. Si la música de tu juego <em>afecta</em> la jugabilidad (BPM = velocidad enemigos, ritmo = recursos, beat drops = boss waves), tienes algo genuinamente original.</p>
+    <p style="color: var(--muted); font-size: 14px;">El soundtrack de Balatro fue decisivo en su éxito — "lava lamp music" que hipnotiza sin distraer. Tu TD podría hacer lo mismo con un hook más fuerte aún.</p>
+  </div>
+
+  <div style="margin-top: 32px;">
+    <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 20px; color: var(--accent3)">REGLAS DE AUDIO CRÍTICAS</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Feedback de Sonido</h3>
+        <p>Cada acción necesita audio satisfactorio. El "pop" de Bloons es uno de los sonidos más satisfactorios del gaming mobile por diseño. El sonido confirma que la acción valió la pena.</p>
+        <ul>
+          <li>Pop / crunch al matar enemigos</li>
+          <li>Ding metálico al ganar recursos</li>
+          <li>Alarma suave cuando algo pasa</li>
+          <li>Fanfarra épica al subir de nivel torre</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Capas Dinámicas (Adaptive Audio)</h3>
+        <p>La música cambia según el estado del juego. Esto es estándar en los mejores TD. La música comunica urgencia sin que el jugador tenga que leer la pantalla.</p>
+        <ul>
+          <li>Fase build: música tranquila, pace lento</li>
+          <li>Oleada normal: ritmo medio, percusión</li>
+          <li>Boss wave: todo se intensifica</li>
+          <li>Victoria: resolución musical catártica</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. ENEMIGOS -->
+<section class="section" id="enemigos">
+  <div class="section-label" style="color: var(--accent1)">04 / ENEMIGOS</div>
+  <div class="section-title">El <span style="color: var(--accent1)">diseño</span> del antagonista</div>
+  <p class="section-intro">Los enemigos son los protagonistas reales del TD. Su variedad, diseño y comportamiento determinan si el juego se siente profundo o repetitivo.</p>
+
+  <table class="rank-table" style="margin-bottom: 40px;">
+    <tr>
+      <th>#</th>
+      <th>TIPO DE ENEMIGO</th>
+      <th>MECÁNICA CLAVE</th>
+      <th>RESPUESTA DEL JUGADOR</th>
+      <th>EFECTIVIDAD</th>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">01</td>
+      <td><strong>BOSS</strong></td>
+      <td>HP masivo + habilidades únicas</td>
+      <td>Adrenalina máxima, memorable</td>
+      <td><span class="badge badge-fire">⭐⭐⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">02</td>
+      <td><strong>RÁPIDO</strong></td>
+      <td>Velocidad extrema</td>
+      <td>Pánico, reacción rápida</td>
+      <td><span class="badge badge-gold">⭐⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">03</td>
+      <td><strong>BLINDADO/INMUNE</strong></td>
+      <td>Resistente a tipo de daño</td>
+      <td>Obliga rethinking de estrategia</td>
+      <td><span class="badge badge-gold">⭐⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">04</td>
+      <td><strong>VOLADOR</strong></td>
+      <td>Ignora el camino del mapa</td>
+      <td>Requiere diversificación de towers</td>
+      <td><span class="badge badge-gold">⭐⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">05</td>
+      <td><strong>REGENERADOR</strong></td>
+      <td>Se cura si no hay DPS constante</td>
+      <td>Urgencia, no puedes relajarte</td>
+      <td><span class="badge badge-purple">⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">06</td>
+      <td><strong>SPAWNER</strong></td>
+      <td>Al morir crea enemigos menores</td>
+      <td>Sorpresa, obliga prioridad diferente</td>
+      <td><span class="badge badge-purple">⭐⭐⭐</span></td>
+    </tr>
+    <tr>
+      <td style="color: var(--muted); font-family: 'JetBrains Mono', monospace;">07</td>
+      <td><strong>STEALTH</strong></td>
+      <td>Invisible hasta cierto punto</td>
+      <td>Ansiedad, necesita torre especial</td>
+      <td><span class="badge badge-cyan">⭐⭐⭐</span></td>
+    </tr>
+  </table>
+
+  <div class="highlight" style="border: 1px solid rgba(255,204,0,0.2);">
+    <h4 style="color: var(--accent2);">🔑 Regla de Diseño de Enemigos</h4>
+    <p style="font-size: 15px; color: var(--muted); line-height: 1.8;">Cada enemigo necesita una <strong style="color: white;">silueta única</strong> reconocible en un frame. El jugador debe poder identificar "ese es el volador" sin leer nada. Bloons lo hace perfectamente: rojo = básico, azul = más rápido, negro = inmune a explosiones. El color <em>es</em> el manual de instrucciones.</p>
+  </div>
+</section>
+
+<!-- 5. COMBOS DE GÉNERO -->
+<section class="section" id="combos">
+  <div class="section-label" style="color: var(--accent5)">05 / COMBINACIONES DE GÉNERO</div>
+  <div class="section-title">Hybrids que <span style="color: var(--accent5)">funcionan</span></div>
+  <p class="section-intro">Aquí está la mina de oro. Los juegos más virales de 2023-2025 son TODOS híbridos. El TD puro ya no vende solo — necesita algo que lo haga único.</p>
+
+  <div class="grid-2" style="margin-bottom: 32px;">
+    <div class="combo-card">
+      <div class="combo-title">🃏 TD + DECKBUILDER</div>
+      <div class="combo-meta">
+        <span class="badge badge-fire">MÁS CALIENTE 2025</span>
+        <span class="badge badge-gold">VIRAL POTENTIAL</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 9.5 / 10</div>
+      <p class="combo-desc">Core Defense, Shapebreaker, Cards and Towers. La combinación más en tendencia. Las cartas dan variabilidad de run, el TD da satisfacción táctica. Juntos: adicción imposible de apagar. Directamente inspirado en el éxito de Slay the Spire y Balatro. <strong style="color: white;">Esta es la combinación más prometedora para 2025-2026.</strong></p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">⚔️ TD + RPG / ACCIÓN</div>
+      <div class="combo-meta">
+        <span class="badge badge-gold">PROBADO</span>
+        <span class="badge badge-cyan">ALTA RETENCIÓN</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 8.5 / 10</div>
+      <p class="combo-desc">Kingdom Rush, Dungeon Defenders, Orcs Must Die. El jugador controla activamente un héroe dentro del TD. Elimina el mayor problema del género: el aburrimiento pasivo. Multiplica la retención porque hay skill expression real.</p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">🎲 TD + ROGUELITE</div>
+      <div class="combo-meta">
+        <span class="badge badge-fire">ESTÁNDAR MODERNO</span>
+        <span class="badge badge-purple">INFINITO</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 9.0 / 10</div>
+      <p class="combo-desc">Rogue Tower, Bad North, Legion TD 2. Procedural generation + permadeath suave + meta-progresión. El "just one more run" es imbatible para retención. Sin roguelite, el TD puro se agota en 5-10 horas.</p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">🏙️ TD + CITY BUILDER</div>
+      <div class="combo-meta">
+        <span class="badge badge-cyan">EMERGENTE</span>
+        <span class="badge badge-green">ÚNICO</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 8.0 / 10</div>
+      <p class="combo-desc">Thronefall, Mindustry. Construís economía de día, defendés de noche. El ciclo día-noche crea ritmo natural satisfactorio. Thronefall fue un breakout hit de 2023 con este concepto minimalista.</p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">🎵 TD + RITMO</div>
+      <div class="combo-meta">
+        <span class="badge badge-green">NICHO VIRGEN</span>
+        <span class="badge badge-fire">OPORTUNIDAD</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 10/10 (si se ejecuta bien)</div>
+      <p class="combo-desc">Casi inexplorado a nivel comercial. Los beats del soundtrack podrían determinar cuándo atacan los enemigos, la cadencia de disparo de las torres, o los momentos de spawn de recursos. Visualmente hipnótico y shareble en redes sociales.</p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">🧩 TD + AUTOCHESS / AUTO-BATTLER</div>
+      <div class="combo-meta">
+        <span class="badge badge-purple">TENDENCIA</span>
+        <span class="badge badge-cyan">MOBILE HIT</span>
+      </div>
+      <div class="viral-score">VIRAL SCORE: 8.5 / 10</div>
+      <p class="combo-desc">Mechabellum, Legion TD 2. La economía del autochess (enviar unidades, farm, income) mezclada con el posicionamiento TD. Muy popular en Asia. Potencial enorme en mobile.</p>
+    </div>
+  </div>
+
+  <div class="highlight" style="border: 1px solid rgba(0,255,136,0.2);">
+    <h4 style="color: var(--accent5);">🏆 La Combinación de Oro para 2026</h4>
+    <p style="font-size: 15px; color: var(--muted); line-height: 1.8;">Basado en la investigación: <strong style="color: white;">TD + Roguelite + Deckbuilder + elemento musical único</strong>. Ningún juego exitoso ha combinado los cuatro todavía. 9 Kings (2025) combinó TD + deckbuilder con dios-game y fue el breakout hit de estrategia del año. Tu proyecto <strong style="color: white;">TwerDefenseStrategy</strong> con sus mejoras musicales podría estar en la dirección correcta si los integra mecánicamente.</p>
+  </div>
+</section>
+
+<!-- 6. LECCIÓN BALATRO -->
+<section class="section" id="balatro">
+  <div class="section-label" style="color: var(--accent4)">06 / LECCIÓN BALATRO</div>
+  <div class="section-title">Qué hacen los <span style="color: var(--accent4)">juegos virales</span></div>
+  <p class="section-intro">Balatro fue el juego más adictivo de 2024. GotY en GDC, BAFTA Debut Game. ¿Por qué? Sus lecciones se aplican directamente al TD.</p>
+
+  <div class="balatro-grid">
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent4)">1</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">FAMILIARIDAD SUBVERTIDA</div>
+      <div class="balatro-label">Poker que TODOS conocen, pero las reglas están rotas de la mejor forma. En TD: torres clásicas con twist sorprendente.</div>
+    </div>
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent3)">2</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">DEPTH &gt; COMPLEXITY</div>
+      <div class="balatro-label">Pocas piezas pero con interacciones riquísimas. No más torres = mejor juego. Sinergias entre pocas torres = mejor juego.</div>
+    </div>
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent1)">3</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">BUILDS QUE "ROMPEN"</div>
+      <div class="balatro-label">El momento en que tu build hace números absurdos es el gameplay loop. El jugador NECESITA ese momento de poder extremo cada run.</div>
+    </div>
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent5)">4</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">ESTÉTICA HIPNÓTICA</div>
+      <div class="balatro-label">El "lava lamp background" de Balatro es parte del loop de adicción. El visual feedback debe ser satisfactorio por sí solo.</div>
+    </div>
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent2)">5</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">IMPOSIBLE DE OPTIMIZAR</div>
+      <div class="balatro-label">Los mejores roguelites no tienen "solución óptima". Cada run exige adaptación. El jugador nunca puede "ya sé cómo funciona".</div>
+    </div>
+    <div class="balatro-card">
+      <div class="balatro-num" style="color: var(--accent4)">6</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin: 8px 0; color: var(--accent2)">150 JOKERS (VARIEDAD)</div>
+      <div class="balatro-label">150 jokers distintos aseguran que cada run se sienta diferente. En TD: un pool gigante de modificadores/upgrades/artefactos.</div>
+    </div>
+  </div>
+
+  <div class="formula" style="margin-top: 32px;">
+    <strong>APLICADO A TU TD:</strong><br><br>
+    Torre simple → + Deckbuilder de upgrades → + Sinergias ocultas → + Música reactiva → + Builds imposibles de resolver → = 🃏 BALATRO CON TORRES
+  </div>
+</section>
+
+<!-- 7. ERRORES -->
+<section class="section" id="errores">
+  <div class="section-label" style="color: var(--accent1)">07 / ERRORES FATALES</div>
+  <div class="section-title">Lo que <span style="color: var(--accent1)">NUNCA</span> hacer</div>
+  <p class="section-intro">Directamente de miles de reviews negativas en Steam, Play Store, App Store, Reddit y foros de desarrollo. Estos errores arruinan juegos prometedores.</p>
+
+  <div class="do-dont">
+    <div class="do-box">
+      <h4>✅ HACER</h4>
+      <ul>
+        <li>El jugador SIEMPRE sabe por qué perdió</li>
+        <li>Primera wave empieza en menos de 60 segundos</li>
+        <li>Curva de dificultad gradual y bien escalada</li>
+        <li>Enemigos con siluetas únicas y reconocibles</li>
+        <li>Cada torre tiene un propósito claro</li>
+        <li>El jugador puede hacer algo durante las waves</li>
+        <li>Meta-progresión que da razón de volver</li>
+        <li>Modos de dificultad accesibles</li>
+        <li>Builds que se sientan "rotas" ocasionalmente</li>
+        <li>Audio que confirma cada acción positiva</li>
+        <li>Tutorial que no paraliza — aprender jugando</li>
+        <li>Updates regulares post-lanzamiento</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <h4>❌ NUNCA HACER</h4>
+      <ul>
+        <li>Slow start — primer minuto de colocar torres sin enemigos</li>
+        <li>Pared de dificultad sin explicación (de fácil a imposible)</li>
+        <li>Todos los enemigos iguales visualmente</li>
+        <li>Demasiadas torres — abruma al jugador nuevo</li>
+        <li>Pay-to-win o pay-to-progress agresivo</li>
+        <li>Solo 1 estrategia viable (el "tower spam")</li>
+        <li>Juego que se puede AFK sin pensar</li>
+        <li>Falta de feedback visual/sonoro en kills</li>
+        <li>Enemigos con stats infladas sin nuevas mecánicas</li>
+        <li>Mapas todos iguales sin variedad táctica</li>
+        <li>Sin modo endless para hardcore players</li>
+        <li>Copiar mecánicas sin añadir nada nuevo</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top: 32px; border: 1px solid rgba(255,77,77,0.2);">
+    <h4 style="color: var(--accent1);">☠️ El Error #1: El Jugador Espectador</h4>
+    <p style="font-size: 15px; color: var(--muted); line-height: 1.8;">La queja más repetida en reviews negativas: "coloco torres y me aburro viendo la oleada". Si el jugador no tiene nada que hacer mientras los enemigos avanzan, el juego pierde a la mayoría. <strong style="color: white;">Siempre dale algo al jugador para hacer durante la acción</strong>: usar habilidades, controlar un héroe, recolectar recursos, activar habilidades especiales.</p>
+  </div>
+</section>
+
+<!-- 8. PSICOLOGÍA -->
+<section class="section" id="sesgo">
+  <div class="section-label" style="color: var(--accent2)">08 / PSICOLOGÍA DEL JUGADOR</div>
+  <div class="section-title">Sesgos y <span style="color: var(--accent2)">motivaciones</span></div>
+  <p class="section-intro">Entender POR QUÉ la gente juega TD es la clave para diseñar algo que no puedan soltar. Hay segmentos muy distintos con motivaciones muy distintas.</p>
+
+  <div class="grid-3" style="margin-bottom: 40px;">
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), #ff6600)"></div>
+      <span class="card-icon">🧩</span>
+      <h3>El Optimizador</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-gold">30% del mercado</span></div>
+      <p>Busca la build perfecta. Le encanta calcular DPS, experimentar combinaciones, encontrar exploits. Genera el contenido de YouTube y Reddit que hace viral tu juego.</p>
+      <ul>
+        <li>Necesita: builds complejas y sinergias</li>
+        <li>Ama: tier lists, meta discussions</li>
+        <li>Retiene si: el juego no tiene "solución"</li>
+        <li>Comparte: cuando encuentra algo roto</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent3), var(--accent5))"></div>
+      <span class="card-icon">😌</span>
+      <h3>El Casual/Zen</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-cyan">50% del mercado</span></div>
+      <p>Juega para relajarse. Quiere sentirse inteligente sin pensar demasiado. Mobile-first. Plants vs Zombies, Bloons TD son sus favoritos. El mercado más grande.</p>
+      <ul>
+        <li>Necesita: accesibilidad, curva suave</li>
+        <li>Ama: progresión clara, estética linda</li>
+        <li>Retiene si: hay algo nuevo que desbloquear</li>
+        <li>Paga si: le encanta y es justo</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--accent1), var(--accent4))"></div>
+      <span class="card-icon">🏆</span>
+      <h3>El Hardcore</h3>
+      <div style="margin: 8px 0;"><span class="badge badge-purple">20% del mercado</span></div>
+      <p>Quiere sufrir. Speedruns, challengeruns, todas las estrellas. Comunidad muy vocal que genera reputación. Si el juego tiene profundidad, ellos lo descubren.</p>
+      <ul>
+        <li>Necesita: modo difícil brutal, endless</li>
+        <li>Ama: achievements, leaderboards</li>
+        <li>Retiene si: hay siempre algo imposible</li>
+        <li>Comparte: logros imposibles</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 20px; color: var(--accent2)">SESGO DE ELECCIÓN POR PLATAFORMA</h3>
+
+  <table class="rank-table">
+    <tr>
+      <th>PLATAFORMA</th>
+      <th>ESTILO PREFERIDO</th>
+      <th>PRECIO ACEPTADO</th>
+      <th>SESIÓN TÍPICA</th>
+      <th>LO QUE MÁS VALORAN</th>
+    </tr>
+    <tr>
+      <td>📱 Mobile iOS</td>
+      <td>Cartoon, colorido</td>
+      <td>Free o $2-5</td>
+      <td>5-15 minutos</td>
+      <td>Jugar 1 mano / touch perfecto</td>
+    </tr>
+    <tr>
+      <td>📱 Mobile Android</td>
+      <td>Cualquier estilo</td>
+      <td>Free (F2P dominante)</td>
+      <td>5-20 minutos</td>
+      <td>Progresión visible rápida</td>
+    </tr>
+    <tr>
+      <td>💻 Steam PC</td>
+      <td>Cualquier, pixel o cartoon</td>
+      <td>$5-20</td>
+      <td>30-120 minutos</td>
+      <td>Profundidad, roguelite, mods</td>
+    </tr>
+    <tr>
+      <td>🎮 Nintendo Switch</td>
+      <td>Cartoon, accesible</td>
+      <td>$10-20</td>
+      <td>20-60 minutos</td>
+      <td>Control con joystick, portátil</td>
+    </tr>
+    <tr>
+      <td>🖥️ Xbox/PS</td>
+      <td>Polished, visualmente fuerte</td>
+      <td>$10-30</td>
+      <td>30-90 minutos</td>
+      <td>Cooperativo, explosiones épicas</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 9. HOJA DE RUTA -->
+<section class="section" id="hoja">
+  <div class="section-label" style="color: var(--accent4)">09 / HOJA DE RUTA</div>
+  <div class="section-title">Tu <span style="color: var(--accent4)">camino</span> sugerido</div>
+  <p class="section-intro">Basado en todo lo investigado, aquí está el stack de decisiones recomendado para un TD viral en 2026 que pueda competir con Balatro en adictividad.</p>
+
+  <div class="grid-2" style="margin-bottom: 40px;">
+    <div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>🎯 CORE LOOP IRRESISTIBLE</h4>
+          <p>Definir el loop de 60-90 segundos que sea satisfactorio solo. Wave → kills satisfactorios → upgrade → wave siguiente más intensa. Si este loop no es bueno solo, nada lo salva.</p>
+        </div>
+        <div class="timeline-item">
+          <h4>🧬 SISTEMA DE SINERGIAS</h4>
+          <p>Diseñar 10-15 sinergias "secretas" entre torres/upgrades que el jugador pueda descubrir. El momento del descubrimiento es viral. Los Jokers de Balatro son el modelo a seguir.</p>
+        </div>
+        <div class="timeline-item">
+          <h4>🎲 ROGUELITE LAYER</h4>
+          <p>Añadir variabilidad de run via: artefactos aleatorios, modificadores de mapa, builds aleatorias, o un sistema de cartas. Sin esto, el juego tiene 5-10 horas de vida.</p>
+        </div>
+        <div class="timeline-item">
+          <h4>🎵 AUDIO REACTIVO</h4>
+          <p>El soundtrack cambia con la intensidad. Cada kill tiene sonido satisfactorio. Si tu tema musical es especial, hacelo parte de la mecánica (ritmo = spawn rate, BPM = velocidad).</p>
+        </div>
+        <div class="timeline-item">
+          <h4>🎨 IDENTIDAD VISUAL ÚNICA</h4>
+          <p>Elegir un art style y ejecutarlo perfectamente. No importa si es pixel, cartoon o minimalista — lo importante es CONSISTENCIA y LEGIBILIDAD en caos de oleada.</p>
+        </div>
+        <div class="timeline-item">
+          <h4>📊 META-PROGRESIÓN</h4>
+          <p>Sistema de desbloqueos permanentes que dan razón de volver después de perder. Nuevas torres, modificadores, modos de juego. El fracaso debe sentirse como progreso.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent4), var(--accent3))"></div>
+        <h3>🏆 Referentes a Estudiar</h3>
+        <ul>
+          <li><strong style="color: var(--accent2)">Balatro</strong> — Loop de runs, feedback visual, sinergias</li>
+          <li><strong style="color: var(--accent2)">Kingdom Rush</strong> — Curva de dificultad perfecta, héroes</li>
+          <li><strong style="color: var(--accent2)">Bloons TD 6</strong> — Depth sin complejidad innecesaria</li>
+          <li><strong style="color: var(--accent2)">Thronefall</strong> — Minimalismo que funciona</li>
+          <li><strong style="color: var(--accent2)">9 Kings (2025)</strong> — TD + deckbuilder breakout hit</li>
+          <li><strong style="color: var(--accent2)">Rogue Tower</strong> — Roguelite TD moderno bien ejecutado</li>
+          <li><strong style="color: var(--accent2)">Orcs Must Die 3</strong> — Participación activa del jugador</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent5), var(--accent2))"></div>
+        <h3>💡 Oportunidades No Explotadas</h3>
+        <ul>
+          <li>TD donde la música dicta mecánicas de gameplay</li>
+          <li>TD con narrativa emergente seria (no solo estético)</li>
+          <li>TD + puzzle de física (Creeper World style, nuevo)</li>
+          <li>TD multijugador asimétrico (uno ataca, uno defiende)</li>
+          <li>TD donde el MAPA cambia dinámicamente</li>
+          <li>TD con economía tipo autochess pero en mobile</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight" style="background: linear-gradient(135deg, rgba(162,89,255,0.1), rgba(0,229,255,0.05)); border: 1px solid rgba(162,89,255,0.3);">
+    <h4 style="color: var(--accent4); font-size: 36px;">🎯 La Gran Conclusión</h4>
+    <p style="font-size: 16px; color: #ccc; line-height: 1.9; margin-top: 12px;">El mercado del Tower Defense está <strong style="color: white;">oversaturado</strong> en el nivel superficial (TD clásico con tornillos visuals), pero existe <strong style="color: var(--accent2)">espacio enorme</strong> para TD que combinen 2-3 géneros con una identidad visual fuerte y un elemento sonoro/musical único. El modelo Balatro demuestra que no necesitás presupuesto millonario — necesitás un <strong style="color: var(--accent3)">loop irresistible y una idea que nadie haya ejecutado bien</strong>. Tu proyecto con elementos musicales ya integrados podría ser exactamente eso, si el audio se convierte en mecánica y no solo en acompañamiento.</p>
+  </div>
+</section>
+
+<div class="footer">
+  Investigación compilada por Claude · Fuentes: Steam, Reddit, GameSpot, IGN, Sensor Tower, App Store, Google Play, itch.io, foros indie · Febrero 2026
+</div>
+
+</body>
+</html>
