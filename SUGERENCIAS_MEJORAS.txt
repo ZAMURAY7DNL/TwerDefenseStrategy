@@ -1,0 +1,295 @@
+================================================================================
+  INVESTIGACIÓN: MEJORAS PARA "TACTICAL DEFENSE" (Tower Defense por Turnos)
+  Basado en: Reddit, Bing, reseñas de jugadores, análisis de juegos similares
+  Fecha: Febrero 2026
+================================================================================
+
+JUEGOS REFERENCIADOS EN LA INVESTIGACIÓN:
+  - Into the Breach (Subset Games) — estrategia táctica por turnos, hex grid
+  - Kingdom Rush / Kingdom Rush Battles (Ironhide) — TD clásico
+  - Bloons TD 6 (Ninja Kiwi) — TD con progresión profunda
+  - GemCraft (Game in a Bottle) — TD con 200h+ de contenido
+  - Dungeon Warfare 1 y 2 — TD con laberintos
+  - Orcs Must Die! — TD de acción con héroe activo
+  - Defense Grid — TD clásico, sencillo y divertido
+  - Emberward — TD roguelike con construcción tipo Tetris
+  - Nordhold: Origins — TD + gestión económica + roguelite
+  - Civilization / Hearts of Iron — referencia de profundidad estratégica
+
+================================================================================
+  FLUJO DE INVESTIGACIÓN UTILIZADO
+================================================================================
+
+  1. Reddit r/TowerDefense → posts más votados → qué juegos recomiendan y por qué
+  2. Reddit r/IndieGaming → posts de desarrolladores de TD por turnos → feedback
+  3. Reddit r/GameDesign → principios de diseño de juegos de estrategia
+  4. Reddit r/IntoTheBreach → mecánicas específicas que aman los jugadores
+  5. Reddit r/KingdomRush → qué odian y qué aman de la franquicia más popular
+  6. Bing → búsqueda de características más pedidas en TD hex grid
+  7. SteamPeek → top 30+ juegos hex grid (referencia de mercado)
+  8. itch.io → juegos indie hex+TD: Tessara, Flipside Kingdom, Hexfence, etc.
+
+================================================================================
+  HALLAZGOS CLAVE — LO QUE LOS JUGADORES MÁS PIDEN Y VALORAN
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 1: PROGRESIÓN Y REJUGABILIDAD (⭐⭐⭐⭐⭐ MÁS PEDIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [1.1] SISTEMA DE NIVELES / XP PARA UNIDADES
+        Fuente: GemCraft (200h+ de juego), Dungeon Defenders 2, Bloons TD 6
+        "Siempre subes de nivel y puedes hacer el juego cada vez más difícil"
+        → Las unidades deberían ganar experiencia y mejorar con el tiempo
+        → Árbol de habilidades o mejoras desbloqueables por unidad
+        → Ejemplo: Berserker nivel 3 desbloquea "Furia" (+50% daño por 2 turnos)
+
+  [1.2] ELEMENTOS ROGUELITE / ROGUELIKE
+        Fuente: Nordhold Origins, Emberward, Kingdom Rush Battles, r/TowerDefense
+        "No hay dos partidas iguales" — generación procedural de mapas/enemigos
+        → Selección de mejoras al final de cada turno (tipo Hades/Slay the Spire)
+        → Reliquias o artefactos que cambian las reglas del juego
+        → Modo "Endless" con oleadas infinitas y dificultad escalable
+
+  [1.3] CAMPAÑA CON NARRATIVA
+        Fuente: r/IndieGaming (Strategic Mind: Fight for Freedom, 798 votos)
+        "Más narrativa en el género — 60 minutos de cinemáticas y storytelling"
+        → Historia con misiones con objetivos únicos (no solo "mata todo")
+        → Personajes con trasfondo (el Oracle of Kimi ya es un buen inicio)
+        → Diálogos entre unidades o eventos narrativos entre turnos
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 2: PROFUNDIDAD TÁCTICA (⭐⭐⭐⭐⭐ CRÍTICO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [2.1] ATAQUES TELEGRÁFICOS (ANUNCIADOS)
+        Fuente: Into the Breach — "all enemy attacks are telegraphed"
+        → Mostrar ANTES del turno enemigo qué unidades van a atacar y a quién
+        → Permite al jugador planificar contra-movimientos
+        → Reduce la frustración de "no sabía que me iban a atacar"
+        → IMPLEMENTACIÓN: Mostrar flechas/indicadores en el hex del objetivo
+
+  [2.2] MECÁNICA DE EMPUJE / POSICIONAMIENTO AVANZADO
+        Fuente: Into the Breach (191 votos, 145 comentarios)
+        "Crear turnos — empujar enemigos entre sí para que se ataquen mutuamente"
+        → Habilidades que empujan unidades a hexágonos adyacentes
+        → Posicionar enemigos sobre trampas o fuera del mapa
+        → Combos de posicionamiento: empujar → caer en zona de daño
+
+  [2.3] HABILIDADES ESPECIALES POR TIPO DE UNIDAD
+        Fuente: Kingdom Rush (torres con efectos únicos), Bloons TD 6
+        "Muchos efectos diferentes de torres disponibles cada pocas oleadas"
+        → Berserker: Carga (mueve 2 hexágonos y ataca)
+        → Assault: Supresión (reduce movimiento enemigo)
+        → Ranger: Disparo de área (daña hexágonos adyacentes al objetivo)
+        → Sniper: Disparo perforante (atraviesa múltiples unidades en línea)
+
+  [2.4] TERRENO CON EFECTOS TÁCTICOS
+        Fuente: Civilization, Into the Breach, r/GameDesign
+        → Hexágonos con bonificaciones: +defensa en bosque, +ataque en colina
+        → Terreno destructible (las torres pueden crear obstáculos)
+        → Zonas de fuego/veneno que dañan a quien las atraviese
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 3: VARIEDAD DE CONTENIDO (⭐⭐⭐⭐ MUY PEDIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [3.1] FACCIONES CON ESTILOS DE JUEGO DISTINTOS
+        Fuente: r/KingdomRush ("Si Kingdom Rush fuera un RTS y las facciones" — 192 votos)
+        → Facción Humana: equilibrada, torres fuertes
+        → Facción Orcos: unidades agresivas, pocas torres
+        → Facción Élfica: unidades rápidas, ataques a distancia
+        → Cada facción con árbol de habilidades propio
+
+  [3.2] MÁS TIPOS DE UNIDADES Y TORRES
+        Fuente: r/KingdomRush (Tower Concept: archer+mage combination)
+        → Torres combinadas (arquero+mago = disparo mágico a distancia)
+        → Unidades de soporte: curandero, escudo, buff de ataque
+        → Unidades especiales desbloqueables: Paladín, Mago de Hielo, Catapulta
+
+  [3.3] MODO MULTIJUGADOR O CO-OP
+        Fuente: r/IndieGaming ("prototipo de algo como un juego tipo tower defense cooperativo" — 172 votos)
+        → Co-op local: dos jugadores controlan mitades del tablero
+        → PvP asíncrono: construyes tu defensa, el rival ataca
+        → Modo desafío: compartir configuraciones de mapa con amigos
+
+  [3.4] MAPAS CON OBJETIVOS VARIADOS
+        Fuente: Into the Breach, Dungeon Warfare
+        → No solo "elimina todos los enemigos"
+        → Objetivos: proteger un punto específico, sobrevivir N turnos,
+          capturar una bandera, escoltar una unidad VIP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 4: EXPERIENCIA DE USUARIO / UX (⭐⭐⭐⭐ MUY PEDIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [4.1] INFORMACIÓN CLARA Y ACCESIBLE
+        Fuente: r/TowerDefense ("Ni siquiera sé cuál es la estrategia aquí o la torre correcta" — 30 votos)
+        → Tooltips detallados al pasar el mouse sobre unidades/torres
+        → Panel de estadísticas comparativas (esta unidad vs esa)
+        → Tutorial interactivo que enseña mecánicas paso a paso
+        → Indicadores visuales de rango de ataque al seleccionar unidad
+
+  [4.2] FEEDBACK VISUAL MEJORADO
+        Fuente: Análisis general de reseñas de TD
+        → Números de daño flotantes al impactar
+        → Animaciones de estado: unidad envenenada, ralentizada, en llamas
+        → Efectos de impacto más satisfactorios (screen shake leve)
+        → Indicador de "crítico" cuando el daño es alto
+
+  [4.3] SISTEMA DE GUARDADO Y PROGRESO
+        Fuente: GemCraft, Bloons TD 6
+        → Guardar partida en cualquier momento
+        → Historial de partidas anteriores
+        → Estadísticas: daño total, unidades perdidas, turnos jugados
+        → Logros desbloqueables
+
+  [4.4] VELOCIDAD DE JUEGO AJUSTABLE
+        Fuente: Bloons TD 6, Defense Grid
+        → Botón para acelerar animaciones (x2, x3)
+        → Modo "auto-combat" para combates repetitivos
+        → Opción de saltar animaciones de proyectiles
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 5: ECONOMÍA Y GESTIÓN (⭐⭐⭐ PEDIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [5.1] SISTEMA DE RECURSOS / ECONOMÍA
+        Fuente: Nordhold Origins ("gestión económica profunda"), Civilization
+        → Oro ganado al eliminar enemigos
+        → Comprar nuevas unidades o mejorar torres entre turnos
+        → Recursos especiales: madera (torres), hierro (unidades), magia (hechizos)
+        → Decisiones de trade-off: ¿mejoro una unidad o compro una nueva?
+
+  [5.2] CONSTRUCCIÓN DE TORRES ESTRATÉGICA
+        Fuente: Dungeon Warfare, Emberward (construcción tipo Tetris)
+        → Colocar nuevas torres en hexágonos vacíos durante el turno del jugador
+        → Torres con sinergias: torre de fuego + torre de viento = torbellino
+        → Límite de torres por zona (obliga a priorizar)
+
+  [5.3] HECHIZOS / HABILIDADES GLOBALES
+        Fuente: Kingdom Rush (habilidades de héroe), GemCraft
+        → Habilidades de un solo uso por partida: lluvia de meteoritos, curación masiva
+        → Cooldown largo para no abusar
+        → Desbloqueables con progresión
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 6: HÉROE / PERSONAJE JUGABLE (⭐⭐⭐ PEDIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [6.1] UNIDAD HÉROE CON ROL ACTIVO
+        Fuente: Orcs Must Die! ("tu personaje es tan importante como tus torres")
+        "Tienes un papel muy activo en tu defensa en vez de solo sentarte a ver"
+        → Una unidad especial "Comandante" que el jugador controla directamente
+        → Habilidades únicas: teletransporte, escudo de área, ataque especial
+        → El héroe puede morir y reaparece en el siguiente turno con penalización
+
+  [6.2] PERSONALIZACIÓN DEL HÉROE
+        Fuente: Dungeon Defenders 2, GemCraft
+        → Equipamiento: armas, armaduras, accesorios
+        → Árbol de habilidades del héroe independiente de las unidades
+        → Aspecto visual personalizable (skins)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CATEGORÍA 7: LO QUE LOS JUGADORES ODIAN (EVITAR)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [7.1] PAY-TO-WIN / GACHA
+        Fuente: r/KingdomRush (crítica masiva a Kingdom Rush Battles)
+        "La probabilidad de que un jugador F2P obtenga una carta Legendaria es
+        prácticamente cero" — NUNCA implementar esto
+
+  [7.2] FALTA DE INFORMACIÓN / OPACIDAD
+        Fuente: r/TowerDefense ("Ni siquiera sé cuál es la estrategia correcta")
+        → El jugador debe SIEMPRE saber qué hace cada unidad y por qué perdió
+
+  [7.3] COMBATE SIN AGENCIA DEL JUGADOR
+        Fuente: r/KingdomRush (crítica a confrontación indirecta)
+        "Cuando cambias la confrontación directa por una indirecta, pierdes ese
+        control sobre la debilidad humana" — el jugador debe sentir que SUS
+        decisiones importan, no que el resultado es automático
+
+  [7.4] REPETITIVIDAD SIN VARIACIÓN
+        Fuente: múltiples fuentes
+        → Cada partida debe sentirse diferente (roguelite, mapas procedurales)
+        → Los enemigos deben tener comportamientos variados
+
+  [7.5] CURVA DE DIFICULTAD MAL CALIBRADA
+        Fuente: Into the Breach (modo difícil discutido extensamente)
+        → Dificultad que escala gradualmente, no picos abruptos
+        → Modo fácil/normal/difícil claramente diferenciados
+
+================================================================================
+  PRIORIDADES DE IMPLEMENTACIÓN RECOMENDADAS
+  (Ordenadas por impacto vs esfuerzo de desarrollo)
+================================================================================
+
+  🔴 ALTA PRIORIDAD (impacto máximo, relativamente fácil):
+     1. Indicadores de ataques telegráficos (mostrar qué atacará el enemigo)
+     2. Números de daño flotantes y feedback visual mejorado
+     3. Tooltips con información de unidades al hacer hover
+     4. Sistema de XP básico para unidades (nivel 1-3)
+     5. Habilidades especiales por tipo de unidad (1 habilidad por tipo)
+
+  🟡 MEDIA PRIORIDAD (gran impacto, más trabajo):
+     6. Efectos de terreno en hexágonos (bosque, colina, agua)
+     7. Sistema de recursos/oro entre turnos
+     8. Modo roguelite: selección de mejoras al final de cada turno
+     9. Más tipos de unidades (curandero, catapulta, mago)
+     10. Objetivos de misión variados (no solo "elimina todo")
+
+  🟢 LARGO PLAZO (muy deseado, requiere mucho desarrollo):
+     11. Campaña con narrativa y misiones únicas
+     12. Facciones con estilos de juego distintos
+     13. Modo co-op o PvP asíncrono
+     14. Héroe jugable con habilidades especiales
+     15. Construcción de torres durante el turno del jugador
+
+================================================================================
+  MECÁNICAS ESPECÍFICAS PARA NUESTRO JUEGO (APLICACIÓN DIRECTA)
+================================================================================
+
+  PARA EL SISTEMA DE COMBATE ACTUAL:
+  → Mostrar antes del turno enemigo qué unidades atacarán (flechas rojas)
+  → Agregar habilidad especial a cada tipo: Berserker=Carga, Assault=Supresión,
+    Ranger=Disparo de área, Sniper=Disparo perforante
+  → Números de daño flotantes cuando un proyectil impacta
+
+  PARA EL SISTEMA DE TURNOS:
+  → Al final de cada turno de combate, ofrecer 3 mejoras aleatorias (roguelite)
+  → Sistema de XP: unidades que sobreviven ganan +5% stats por turno
+  → Permitir al jugador colocar 1 torre nueva por turno (con costo de recursos)
+
+  PARA EL ORACLE OF KIMI:
+  → Expandirlo para mostrar predicciones de ataques enemigos
+  → Agregar "modo análisis" que muestra el rango de todas las unidades enemigas
+  → Sugerencias más específicas: "Mueve el Sniper aquí para atacar 3 enemigos"
+
+  PARA LA IA ENEMIGA:
+  → Enemigos con comportamientos distintos: agresivo, defensivo, flanqueador
+  → Jefes de turno cada 5 turnos con habilidades especiales
+  → Enemigos que se adaptan a la estrategia del jugador
+
+================================================================================
+  FUENTES CONSULTADAS
+================================================================================
+
+  Reddit:
+  - r/TowerDefense (30k miembros) — posts más votados de todos los tiempos
+  - r/IndieGaming (144k miembros) — feedback a desarrolladores de TD por turnos
+  - r/GameDesign — principios de diseño de juegos de estrategia
+  - r/IntoTheBreach (7.7k miembros) — mecánicas específicas valoradas
+  - r/KingdomRush (16k miembros) — críticas y elogios a la franquicia más popular
+
+  Búsquedas:
+  - Bing: "turn based tower defense hex grid most requested features"
+  - SteamPeek: Top 30+ Hex Grid games
+  - itch.io: juegos tagged Hex Based + Tower Defense
+
+  Juegos analizados:
+  Into the Breach, Kingdom Rush, Bloons TD 6, GemCraft, Dungeon Warfare 1&2,
+  Orcs Must Die!, Defense Grid, Emberward, Nordhold Origins, Dungeon Defenders 2
+
+================================================================================
+  FIN DEL DOCUMENTO
+================================================================================
