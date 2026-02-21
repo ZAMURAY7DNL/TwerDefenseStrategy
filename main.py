@@ -1,5 +1,6 @@
 """
 TACTICAL DEFENSE - Punto de entrada
+Sistema de combate por turnos alternados v1.0
 """
 from core.game import TacticalDefenseGame
 
