@@ -185,8 +185,8 @@ class CommunicationTower:
     def __init__(self, ti_system: TacticalInfoSystem):
         self.ti_system   = ti_system
         self.is_active   = True       # Si está destruida, no genera IT
-        self.max_health  = 300
-        self.health      = 300
+        self.max_health = 1000
+        self.health = 1000
         self._anim_time  = 0.0
         self.x           = 0
         self.y           = 0
@@ -203,7 +203,7 @@ class CommunicationTower:
     def take_damage(self, damage: float):
         self.health -= damage
         if self.health <= 0:
-            self.health = 0
+            health = 1000
             self.is_active = False
 
     def is_alive(self) -> bool:

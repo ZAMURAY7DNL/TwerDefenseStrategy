@@ -18,6 +18,8 @@ from .combat_dayr import (
     CombatState,
 )
 
+from .enemy_ai import EnemyAI
+
 __all__ = [
     'GrassSystem', 'HoneycombTile', 'Particle', 'ParticleSystem',
     'ActionMenuSystem', 'TurnSystem',
@@ -30,4 +32,6 @@ __all__ = [
     'DamageSystem', 'BodyZone',
     'TargetingSystem',
     'CombatState',
+    # IA Enemiga
+    'EnemyAI',
 ]

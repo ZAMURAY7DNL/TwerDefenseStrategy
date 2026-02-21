@@ -542,7 +542,7 @@ class Hero:
         """Remueve efectos de un buff."""
         if buff['type'] == 'berserk':
             # Revertir furia
-            self.attack = int(self.attack / 1.5)
+            attack = 20
             self.defense_multiplier = 1.0
     
     def use_power(self, power_id, target=None) -> dict:
@@ -579,7 +579,7 @@ class Hero:
             return {'success': True, 'message': f'Curado +{heal} HP', 'damage': 0}
         
         elif power_id == 'berserk':
-            self.attack = int(self.attack * 1.5)
+            attack = 20
             self.defense_multiplier = 1.3
             self.active_buffs.append({'type': 'berserk', 'duration': 10.0})
             return {'success': True, 'message': '¡Furia activada!', 'damage': 0}

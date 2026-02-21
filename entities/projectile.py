@@ -17,7 +17,7 @@ class TracerProjectile:
         self.owner = owner
         self.particles = particles
         
-        self.speed = 600
+        self.speed = 400
         self.radius = 4
         self.active = True
         self.trail = []
