@@ -17,7 +17,7 @@ from systems import GrassSystem, ParticleSystem
 from systems.alternating_turn_system import AlternatingTurnSystem, AlternatingPhase
 from systems.enemy_ai import EnemyAI
 from systems.sound_generator import SoundGenerator
-from systems.music_fixed import start_music as start_epic_music, stop_music
+from systems.music_external import start_music as start_epic_music, stop_music
 
 # Core modular
 from core.grid_manager import GridManager
