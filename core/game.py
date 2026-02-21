@@ -504,12 +504,16 @@ class TacticalDefenseGame:
     def run(self):
         """Loop principal del juego."""
         running = True
-        while running:
-            dt = self.clock.tick(FPS) / 1000.0
-            running = self.handle_input()
-            self.update(dt)
-            self.draw()
-        pygame.quit()
+        try:
+            while running:
+                dt = self.clock.tick(FPS) / 1000.0
+                running = self.handle_input()
+                self.update(dt)
+                self.draw()
+        finally:
+            # Asegurar que el audio se detenga al cerrar
+            stop_music()
+            pygame.quit()
 
 
 if __name__ == "__main__":
