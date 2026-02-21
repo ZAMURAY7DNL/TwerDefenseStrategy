@@ -27,8 +27,8 @@ def start_music(volume=0.5):
     
     # Buscar archivos de música en orden de preferencia
     music_files = [
-        'epic_song_3min.ogg',      # Canción de 3 minutos generada
-        'epic_song_3min.wav',      # Versión WAV
+        'epic_song_3min.wav',      # Canción de 3 minutos (WAV)
+        'epic_song_3min.ogg',      # Versión OGG si existe
         'bg_music_fixed.ogg',      # Versión anterior
         'bg_music.ogg',            # Versión básica
     ]
