@@ -117,33 +117,189 @@ class OracleOfKimi:
 
 
 class StyledButton:
-    """Botón estilizado"""
+    """Botón estilizado con animaciones"""
     
-    def __init__(self, x, y, width, height, text, color, hover_color, action=None):
+    # Color tema del juego - Azul acero dorado
+    COLOR_BASE = (45, 55, 75)        # Azul oscuro acero
+    COLOR_HOVER = (65, 85, 115)      # Azul más claro
+    COLOR_ACTIVE = (85, 115, 155)    # Azul brillante
+    COLOR_BORDER = (218, 165, 32)    # Dorado
+    COLOR_TEXT = (240, 240, 220)     # Blanco hueso
+    
+    def __init__(self, x, y, width, height, text, action=None, icon=None):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
-        self.color = color
-        self.hover_color = hover_color
         self.action = action
+        self.icon = icon  # Emoji o símbolo opcional
+        
+        # Estado
         self.hovered = False
-    
-    def update(self, mouse_pos):
+        self.pressed = False
+        self.press_anim = 0.0  # Animación de presión 0-1
+        self.hover_anim = 0.0  # Animación de hover 0-1
+        
+        # Efectos
+        self.glow_intensity = 0.0
+        
+    def update(self, mouse_pos, dt=0.016):
+        was_hovered = self.hovered
         self.hovered = self.rect.collidepoint(mouse_pos)
+        
+        # Animación de hover suave
+        target_hover = 1.0 if self.hovered else 0.0
+        self.hover_anim += (target_hover - self.hover_anim) * 10 * dt
+        
+        # Animación de presión
+        target_press = 1.0 if self.pressed else 0.0
+        self.press_anim += (target_press - self.press_anim) * 15 * dt
+        
+        # Glow pulsante cuando está hovered
+        if self.hovered:
+            self.glow_intensity = (math.sin(pygame.time.get_ticks() / 200) + 1) / 2 * 0.5 + 0.5
+        else:
+            self.glow_intensity = 0.0
     
-    def handle_click(self, mouse_pos):
+    def handle_click(self, mouse_pos, pressed=True):
         if self.rect.collidepoint(mouse_pos):
-            if self.action:
-                self.action()
-            return True
+            if pressed:
+                self.pressed = True
+            else:
+                # Release - ejecutar acción
+                self.pressed = False
+                if self.action:
+                    self.action()
+                    return True
+        else:
+            self.pressed = False
         return False
     
     def draw(self, screen, font):
-        color = self.hover_color if self.hovered else self.color
+        import pygame
         
-        pygame.draw.rect(screen, color, self.rect, border_radius=8)
+        # Offset por animación de presión
+        press_offset = int(self.press_anim * 3)
         
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2, border_radius=8)
+        # Rectángulo con animación
+        anim_rect = self.rect.copy()
+        anim_rect.y += press_offset
         
-        text_surf = font.render(self.text, True, (255, 255, 255))
-        text_rect = text_surf.get_rect(center=self.rect.center)
+        # Glow exterior cuando hovered
+        if self.hover_anim > 0.1:
+            glow_color = (*self.COLOR_BORDER[:3], int(self.hover_anim * 100))
+            for i in range(3, 0, -1):
+                glow_rect = anim_rect.inflate(i*4, i*4)
+                pygame.draw.rect(screen, glow_color, glow_rect, border_radius=10)
+        
+        # Color base interpolado
+        base = self._lerp_color(self.COLOR_BASE, self.COLOR_HOVER, self.hover_anim)
+        active = self._lerp_color(base, self.COLOR_ACTIVE, self.press_anim)
+        
+        # Fondo del botón
+        pygame.draw.rect(screen, active, anim_rect, border_radius=8)
+        
+        # Borde dorado brillante
+        border_alpha = 150 + int(self.hover_anim * 105)
+        border_color = (*self.COLOR_BORDER[:3], border_alpha)
+        pygame.draw.rect(screen, border_color, anim_rect, 2, border_radius=8)
+        
+        # Línea decorativa superior
+        line_y = anim_rect.y + 4
+        pygame.draw.line(screen, (255, 255, 255, 80), 
+                        (anim_rect.x + 8, line_y), 
+                        (anim_rect.right - 8, line_y), 1)
+        
+        # Texto centrado con truncamiento inteligente
+        display_text = self.text
+        text_surf = font.render(display_text, True, self.COLOR_TEXT)
+        
+        # Truncar si es muy largo
+        max_width = anim_rect.width - 20
+        if text_surf.get_width() > max_width:
+            while len(display_text) > 3 and font.render(display_text + "...", True, self.COLOR_TEXT).get_width() > max_width:
+                display_text = display_text[:-1]
+            display_text = display_text + "..."
+            text_surf = font.render(display_text, True, self.COLOR_TEXT)
+        
+        # Centrar texto
+        text_rect = text_surf.get_rect(center=anim_rect.center)
+        text_rect.y -= 1  # Ajuste fino
         screen.blit(text_surf, text_rect)
+    
+    def _lerp_color(self, c1, c2, t):
+        """Interpolación lineal entre colores."""
+        return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
+
+
+class PersistentMenu:
+    """Menú persistente a la izquierda con estilo unificado"""
+    
+    COLOR_BG = (25, 30, 40, 230)
+    COLOR_BORDER = (218, 165, 32)
+    
+    def __init__(self, x=20, y=100, width=160):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.buttons = []
+        self.visible = True
+        self.title = "ACCIONES"
+        self.anim_offset = 0.0
+        
+    def clear(self):
+        self.buttons = []
+        
+    def add_button(self, text, action, enabled=True):
+        """Agrega un botón al menú."""
+        height = 38
+        spacing = 6
+        y_pos = self.y + 40 + len(self.buttons) * (height + spacing)
+        
+        btn = StyledButton(
+            self.x, y_pos, self.width, height, 
+            text, action=action if enabled else None
+        )
+        btn.enabled = enabled
+        self.buttons.append(btn)
+        return btn
+    
+    def update(self, mouse_pos, dt=0.016):
+        """Actualiza todos los botones."""
+        # Animación de entrada
+        target = 0.0 if self.visible else -20.0
+        self.anim_offset += (target - self.anim_offset) * 10 * dt
+        
+        for btn in self.buttons:
+            btn.update(mouse_pos, dt)
+    
+    def handle_click(self, mouse_pos, pressed=True):
+        """Maneja clicks en los botones."""
+        for btn in self.buttons:
+            if btn.handle_click(mouse_pos, pressed):
+                return btn.action
+        return None
+    
+    def draw(self, screen, font):
+        if not self.visible:
+            return
+        
+        import pygame
+        
+        # Fondo del panel
+        total_height = 50 + len(self.buttons) * 44
+        panel = pygame.Surface((self.width + 20, total_height), pygame.SRCALPHA)
+        pygame.draw.rect(panel, self.COLOR_BG, (0, 0, self.width + 20, total_height), border_radius=10)
+        pygame.draw.rect(panel, self.COLOR_BORDER, (0, 0, self.width + 20, total_height), 2, border_radius=10)
+        screen.blit(panel, (self.x - 10, self.y - 10))
+        
+        # Título
+        title_surf = font.render(self.title, True, self.COLOR_BORDER)
+        screen.blit(title_surf, (self.x, self.y - 5))
+        
+        # Línea separadora
+        pygame.draw.line(screen, self.COLOR_BORDER, 
+                        (self.x, self.y + 20), 
+                        (self.x + self.width, self.y + 20), 2)
+        
+        # Botones
+        for btn in self.buttons:
+            btn.draw(screen, font)
